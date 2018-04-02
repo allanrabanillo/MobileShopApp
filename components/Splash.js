@@ -4,7 +4,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Image
+  Image,
+  StatusBar
 } from 'react-native';
 import { Container } from 'native-base';
 
@@ -13,6 +14,7 @@ export default class Splash extends Component {
   render() {
     return (
       <Container style={styles.container}>
+      <StatusBar barStyle="light-content" />
         <Image style={styles.logo} source={require('../images/logo.png')}></Image>
       </Container>
     );
