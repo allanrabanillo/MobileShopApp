@@ -8,7 +8,7 @@ import {
     KeyboardAvoidingView,AsyncStorage,Modal
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { Root,Toast, Spinner } from 'native-base';
+import { Root,Toast, Spinner,Button } from 'native-base';
 
 const ACCESS_TOKEN = 'access-token';
 
@@ -53,57 +53,74 @@ export default class Login extends Component {
 
 
     async onLoginPressed(){
-        this.setState({loading:true});
-        let url = "https://36d18cf7.ngrok.io/MobileShopAPI/auth/login";
-        try{
-            let response = await fetch(url,{
-                method:'POST',
-                headers:{
-                    'Accept':'application/json',
-                    'Content-Type': 'application/json',
-                    'Client-Service':'frontend-client',
-                    'Auth-Key':'simplerestapi',
-                },
-                body:JSON.stringify({
-                    username: this.state.username,
-                    password:this.state.password,
-                })
-            });
-            let responseJson = await response.json();
-            if(responseJson.status == 200){
-                // this.setState({error:""});
-                this.setState({loading:false});
-                let accessToken = responseJson.token;
-                this.storeToken(accessToken);
-                console.log("Access Token: " + accessToken);
-                // this.props.navigation.navigate('Home',responseJson);
-                this.props
-               .navigation
-               .dispatch(NavigationActions.reset(
-                 {
-                    index: 0,
-                    actions: [
-                      NavigationActions.navigate({ routeName: 'Home', params:responseJson})
-                    ]
-                  }));
-            }else{
-                this.setState({loading:false});
-                let error = responseJson.message;
-                throw error;
-            }
-            console.log(responseJson);
-        }catch(error){
-            this.removeToken();
-            Toast.show({
-                text: error,
-                position: 'top',
-                type:'danger',
-                buttonText: 'OK',
-                duration:5000
-              })
-            // this.setState({error:error});
-            console.log("error "+ error);
-        }
+        // this.setState({loading:true});
+        // let url = "https://c52080c8.ngrok.io/MobileShopAPI/auth/login";
+        // try{
+        //     let response = await fetch(url,{
+        //         method:'POST',
+        //         headers:{
+        //             'Accept':'application/json',
+        //             'Content-Type': 'application/json',
+        //             'Client-Service':'frontend-client',
+        //             'Auth-Key':'simplerestapi',
+        //         },
+        //         body:JSON.stringify({
+        //             username: this.state.username,
+        //             password:this.state.password,
+        //         })
+        //     });
+        //     if(response.status == 200){
+        //         this.setState({loading:false});
+        //         let responseJson = await response.json();
+        //         if(responseJson.status == 200){
+        //             // this.setState({error:""});
+                    
+        //             let accessToken = responseJson.token;
+        //             this.storeToken(accessToken);
+        //             console.log("Access Token: " + accessToken);
+        //             // this.props.navigation.navigate('Home',responseJson);
+        //             this.props
+        //         .navigation
+        //         .dispatch(NavigationActions.reset(
+        //             {
+        //                 index: 0,
+        //                 actions: [
+        //                 NavigationActions.navigate({ routeName: 'Home', params:responseJson})
+        //                 ]
+        //             }));
+        //         }else{
+                    
+        //             let error = responseJson.message;
+        //             throw error;
+        //         }
+        //     }else{
+        //         this.setState({loading:false});
+        //         console.log(response);
+        //         let error = response.statusText
+        //         throw error;
+        //     }
+        //     //console.log(responseJson);
+        // }catch(error){
+        //     this.removeToken();
+        //     Toast.show({
+        //         text: error,
+        //         position: 'top',
+        //         type:'danger',
+        //         buttonText: 'OK',
+        //         duration:5000
+        //       })
+        //     // this.setState({error:error});
+        //     console.log("error "+ error);
+        // }
+        this.props
+                .navigation
+                .dispatch(NavigationActions.reset(
+                    {
+                        index: 0,
+                        actions: [
+                        NavigationActions.navigate({ routeName: 'Home'})
+                        ]
+                    }));
     }
 
 
@@ -157,11 +174,11 @@ export default class Login extends Component {
                                     onSubmitEditing={this.onLoginPressed.bind(this)}
                                     ref={"txtPassword"}
                                 />
-                                <TouchableOpacity style={styles.buttonContainer}
+                                <Button block style={styles.buttonContainer}
                                 onPress={this.onLoginPressed.bind(this)}
                                 >
                                     <Text style={styles.buttonText}>SIGN IN</Text>
-                                </TouchableOpacity>
+                                </Button>
                                 
                             </View>
                         </View>
@@ -175,7 +192,7 @@ export default class Login extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#2979FF',
+        backgroundColor: '#0D47A1',
         flexDirection: 'column',
     },
     mainContainer: {
@@ -218,12 +235,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10
     },
     buttonContainer: {
-        backgroundColor: '#f7c744',
+        // backgroundColor: '#f7c744',
         paddingVertical: 15
     },
     buttonText: {
         textAlign: 'center',
-        color :'rgb(32, 53, 70)',
+        color :'white',
         fontWeight: 'bold',
         fontSize: 18
     },

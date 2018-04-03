@@ -24,7 +24,7 @@ export default class Splash extends Component {
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'#2979FF',
+        backgroundColor:'#0D47A1',
         alignItems:'center',
         justifyContent:'center'
     },

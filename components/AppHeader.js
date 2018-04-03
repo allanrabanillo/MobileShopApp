@@ -14,14 +14,14 @@ export default class AppHeader extends Component {
   render() {
     return (
       <View>
-       <Header>
+       <Header style={styles.headerContainer}>
           <Left>
             <Button transparent>
               <Icon name='menu' />
             </Button>
           </Left>
           <Body>
-            <Title>Header</Title>
+            <Title style={styles.headerTitle} >Header</Title>
           </Body>
           <Right />
         </Header>
@@ -29,4 +29,13 @@ export default class AppHeader extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  headerContainer:{
+    backgroundColor: '#0D47A1',
+  },
+  headerTitle:{
+    color:'white',
+  }
+})
 
