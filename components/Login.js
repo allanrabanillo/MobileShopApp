@@ -11,6 +11,7 @@ import { NavigationActions } from 'react-navigation';
 import { Root,Toast, Spinner,Button } from 'native-base';
 
 const ACCESS_TOKEN = 'access-token';
+const USER_DATA = 'user-data';
 
 export default class Login extends Component {
     constructor(){
@@ -23,6 +24,7 @@ export default class Login extends Component {
         }
     }
 
+
     async storeToken(accessToken){
         try{
             await AsyncStorage.setItem(ACCESS_TOKEN,accessToken);
@@ -32,10 +34,28 @@ export default class Login extends Component {
         }
     }
 
+    async storeUserData(data){
+        try{
+            await AsyncStorage.setItem(USER_DATA,data);
+            this.getUserData()
+        }catch(error){
+            console.log("Something went wrong: "+error)
+        }
+    }
+
     async getToken(){
         try{
             let token = await AsyncStorage.getItem(ACCESS_TOKEN);
-            console.log("TOKEN: " +token)
+            //console.log("TOKEN: " +token)
+        }catch(error){
+            console.log("Something went wrong: "+error)
+        }
+    }
+
+    async getUserData(){
+        try{
+            let userData = await AsyncStorage.getItem(USER_DATA);
+            //console.log("UserDATA: " +userData)
         }catch(error){
             console.log("Something went wrong: "+error)
         }
@@ -53,66 +73,34 @@ export default class Login extends Component {
 
 
     async onLoginPressed(){
-        // this.setState({loading:true});
-        // let url = "https://c52080c8.ngrok.io/MobileShopAPI/auth/login";
-        // try{
-        //     let response = await fetch(url,{
-        //         method:'POST',
-        //         headers:{
-        //             'Accept':'application/json',
-        //             'Content-Type': 'application/json',
-        //             'Client-Service':'frontend-client',
-        //             'Auth-Key':'simplerestapi',
-        //         },
-        //         body:JSON.stringify({
-        //             username: this.state.username,
-        //             password:this.state.password,
-        //         })
-        //     });
-        //     if(response.status == 200){
-        //         this.setState({loading:false});
-        //         let responseJson = await response.json();
-        //         if(responseJson.status == 200){
-        //             // this.setState({error:""});
+        this.setState({loading:true});
+        let url = "https://3f12b147.ngrok.io/MobileShopAPI/auth/login";
+        try{
+            let response = await fetch(url,{
+                method:'POST',
+                headers:{
+                    'Accept':'application/json',
+                    'Content-Type': 'application/json',
+                    'Client-Service':'frontend-client',
+                    'Auth-Key':'simplerestapi',
+                },
+                body:JSON.stringify({
+                    username: this.state.username,
+                    password:this.state.password,
+                })
+            });
+            if(response.status == 200){
+                this.setState({loading:false});
+                let responseJson = await response.json();
+                if(responseJson.status == 200){
+                    // this.setState({error:""});
                     
-        //             let accessToken = responseJson.token;
-        //             this.storeToken(accessToken);
-        //             console.log("Access Token: " + accessToken);
-        //             // this.props.navigation.navigate('Home',responseJson);
-        //             this.props
-        //         .navigation
-        //         .dispatch(NavigationActions.reset(
-        //             {
-        //                 index: 0,
-        //                 actions: [
-        //                 NavigationActions.navigate({ routeName: 'Home', params:responseJson})
-        //                 ]
-        //             }));
-        //         }else{
-                    
-        //             let error = responseJson.message;
-        //             throw error;
-        //         }
-        //     }else{
-        //         this.setState({loading:false});
-        //         console.log(response);
-        //         let error = response.statusText
-        //         throw error;
-        //     }
-        //     //console.log(responseJson);
-        // }catch(error){
-        //     this.removeToken();
-        //     Toast.show({
-        //         text: error,
-        //         position: 'top',
-        //         type:'danger',
-        //         buttonText: 'OK',
-        //         duration:5000
-        //       })
-        //     // this.setState({error:error});
-        //     console.log("error "+ error);
-        // }
-        this.props
+                    let accessToken = responseJson.token;
+                    this.storeToken(accessToken);
+                    this.storeUserData(JSON.stringify(responseJson));
+                    //console.log("Access Token: " + accessToken);
+                    this.props.navigation.navigate('Home',responseJson);
+                    this.props
                 .navigation
                 .dispatch(NavigationActions.reset(
                     {
@@ -121,23 +109,54 @@ export default class Login extends Component {
                         NavigationActions.navigate({ routeName: 'Home'})
                         ]
                     }));
+                }else{
+                    
+                    let error = responseJson.message;
+                    throw error;
+                }
+            }else{
+                this.setState({loading:false});
+                console.log(response);
+                let error = response.statusText
+                throw error;
+            }
+            //console.log(responseJson);
+        }catch(error){
+            this.removeToken();
+            Toast.show({
+                text: error,
+                position: 'top',
+                type:'danger',
+                buttonText: 'OK',
+                duration:5000
+              })
+            // this.setState({error:error});
+            console.log("error "+ error);
+        }
+        // this.props
+        //         .navigation
+        //         .dispatch(NavigationActions.reset(
+        //             {
+        //                 index: 0,
+        //                 actions: [
+        //                 NavigationActions.navigate({ routeName: 'Home'})
+        //                 ]
+        //             }));
     }
 
 
     render() {
         return (
             
-            
-            <SafeAreaView style={styles.container}>
-                <StatusBar barStyle="light-content" />
                 <KeyboardAvoidingView behavior='padding' style={styles.container}>
-                    <TouchableWithoutFeedback style={styles.container} 
-                            onPress={Keyboard.dismiss}>
-                        <View style={styles.mainContainer}>
+                <StatusBar barStyle="light-content" />
                             <Modal
                             transparent={true}
                             animationType={'none'}
-                            visible={this.state.loading}>
+                            visible={this.state.loading}
+                            onRequestClose={()=> {
+
+                            }} >
                                 <View style={styles.SpinnerContainer}>
                                     <Spinner color="rgba(255,255,255,0.8)" />
                                     <Text style={styles.SpinnerText}>Loading..</Text>
@@ -161,6 +180,7 @@ export default class Login extends Component {
                                     returnKeyType='next'
                                     autoCorrect={false}
                                     autoCapitalize='none'
+                                    underlineColorAndroid='rgba(0,0,0,0)'
                                     onChangeText={ (text) => this.setState({username: text})}
                                     onSubmitEditing={()=> this.refs.txtPassword.focus()}
                                 />
@@ -170,6 +190,7 @@ export default class Login extends Component {
                                     returnKeyType='go'
                                     secureTextEntry
                                     autoCorrect={false}
+                                    underlineColorAndroid='rgba(0,0,0,0)'
                                     onChangeText={ (text) => this.setState({password: text})}
                                     onSubmitEditing={this.onLoginPressed.bind(this)}
                                     ref={"txtPassword"}
@@ -181,10 +202,9 @@ export default class Login extends Component {
                                 </Button>
                                 
                             </View>
-                        </View>
-                    </TouchableWithoutFeedback>
+                        
                 </KeyboardAvoidingView>
-            </SafeAreaView>
+        
            
         )
     }
@@ -193,22 +213,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#0D47A1',
-        flexDirection: 'column',
-    },
-    mainContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
+        
     },
     logoContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        flex: 1,
-        marginBottom:150
+        flexGrow:1,
     },
     logo: {
         width: 150,
-        height: 90,
+        height: 100,
 
     },
     title: {
@@ -219,11 +233,6 @@ const styles = StyleSheet.create({
         opacity: 0.9
     },
     infoContainer: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: 250,
         padding: 20,
         // backgroundColor: 'red'
     },

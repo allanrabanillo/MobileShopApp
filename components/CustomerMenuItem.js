@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   Animated
 } from 'react-native';
-import { Container,Thumbnail,Content,Card ,CardItem, Body} from 'native-base';
+import { Toast,Container,Thumbnail,Content,Card ,CardItem, Body} from 'native-base';
 export default class CustomerMenuItem extends Component {
   constructor(props){
     super(props);
@@ -31,16 +31,27 @@ export default class CustomerMenuItem extends Component {
       duration:500,
     }).start()
   }
+
+  itemPressed(){
+    let customer = this.props.customerData;
+    Toast.show({
+      text: customer.id,
+      position: 'bottom',
+      type:'success',
+      buttonText: 'OK',
+      duration:5000
+    })
+   
+  }
+
   render() {
     let customer = this.props.customerData;
     const {screenWidth} = this.props;
     return(
       <Container style={styles.container}>
         <Content>
-        <TouchableWithoutFeedback onPressIn={()=>this.animateIn()} onPressOut={()=>this.animateOut()} >
-        <Animated.View style={{width:screenWidth,height:200,transform:[{
-          scale:this.state.animatePress
-        }]
+       
+        <View style={{width:screenWidth,height:200
         }}>
           <Card>
             <CardItem>
@@ -49,12 +60,12 @@ export default class CustomerMenuItem extends Component {
             </CardItem>
             <CardItem style={{backgroundColor:'#f7c744'}}>
             <Body>
-            <Text style={styles.textTitle}>{customer.id}</Text>
+            <Text style={styles.textTitle}>{customer.customerAlias}</Text>
             </Body>
             </CardItem>
           </Card>
-          </Animated.View>
-        </TouchableWithoutFeedback>
+          </View>
+       
         </Content>
        
        {/* <View style={{backgroundColor:'#f7c744',width:screenWidth}}>
